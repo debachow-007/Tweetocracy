@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Party Manifesto Search</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+        }
+        #pdfContainer {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #fff;
+            overflow: auto;
+            white-space: pre-wrap; /* Preserve line breaks */
+        }
+        .highlight {
+            background-color: yellow;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Party Manifesto Search</h1>
+        <form id="searchForm">
+            <div class="form-group">
+                <label for="partySelect">Select Party:</label>
+                <select class="form-control" id="partySelect">
+                    <option value="BJP">BJP</option>
+                    <option value="Congress">Congress</option>
+                    <option value="AITC">AITC</option>
+                    <option value="DMK">DMK</option>
+                    <option value="CPIM">CPIM</option>
+                    <!-- Add more parties here -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="topicInput">Enter Topic:</label>
+                <input type="text" class="form-control" id="topicInput" placeholder="Enter topic...">
+            </div>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+        <div id="pdfContainer">
+            <!-- Highlighted PDF content will be displayed here -->
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#searchForm').submit(function(event) {
+                event.preventDefault();
+                var party = $('#partySelect').val();
+                var topic = $('#topicInput').val();
+                $.ajax({
+                    type: 'POST',
+                    url: '/search',
+                    data: {
+                        party: party,
+                        topic: topic
+                    },
+                    success: function(response) {
+                        if (response.error) {
+                            $('#pdfContainer').html('<p>' + response.error + '</p>');
+                        } else {
+                            $('#pdfContainer').html(response.pdf);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

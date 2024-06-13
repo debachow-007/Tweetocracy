@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitter Sentiment Analysis</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/style.css" type="text/css">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body" style="background: #444">
+                        <div class="app-title text-center">
+                            <h1>Twitter Sentiment Analysis</h1>
+                        </div>
+                        <p class="text-center">Enter a search query and the maximum number of tweets to analyze.</p>
+                        <form action="/search" method="POST">
+                            <div class="form-group">
+                                <label for="search-query">Search Query</label>
+                                <input type="text" class="form-control" id="search-query" placeholder="Enter search query" name="search_query">
+                            </div>
+                            <div class="form-group">
+                                <label for="max-tweets">Max Tweets</label>
+                                <input type="text" class="form-control" id="max-tweets" placeholder="Enter max tweets (1-100000)" name="max_tweets">
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                        </form>
+                        <div class="mt-3">
+                            {% with messages = get_flashed_messages() %}
+                                {% if messages %}
+                                    {% for message in messages %}
+                                        <div class="alert alert-warning">{{ message }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endwith %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="http://localhost:4001" class="chatbot-button">
+        <i class="fas fa-robot"></i> Chatbot
+      </a>      
+</body>
+</html>

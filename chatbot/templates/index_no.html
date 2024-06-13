@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        label {
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            float: right;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .chat-container {
+            margin-top: 20px;
+        }
+        .chat-item {
+            margin-bottom: 10px;
+        }
+        .user {
+            color: blue;
+        }
+        .bot {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Chatbot</h1>
+        <label for="userInput">Your query:</label>
+        <input type="text" id="userInput" placeholder="Enter your query...">
+        <button onclick="sendQuery()">Send</button>
+        
+        <div class="chat-container" id="chatContainer"></div>
+    </div>
+
+    <script>
+        function sendQuery() {
+            var userInput = document.getElementById("userInput").value;
+            if (!userInput.trim()) {
+                return;
+            }
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/chat", true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        var response = JSON.parse(xhr.responseText).response;
+                        addChatItem("user", userInput);
+                        addChatItem("bot", response);
+                        document.getElementById("userInput").value = "";
+                    } else {
+                        console.error("Request failed:", xhr.statusText);
+                    }
+                }
+            };
+
+            xhr.send(JSON.stringify({ "query": userInput }));
+        }
+
+        function addChatItem(sender, message) {
+            var chatContainer = document.getElementById("chatContainer");
+            var chatItem = document.createElement("div");
+            chatItem.classList.add("chat-item");
+            chatItem.classList.add(sender);
+
+            var senderText = sender === "user" ? "You" : "Chatbot";
+            chatItem.textContent = senderText + ": " + message;
+
+            chatContainer.appendChild(chatItem);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+    </script>
+</body>
+</html>

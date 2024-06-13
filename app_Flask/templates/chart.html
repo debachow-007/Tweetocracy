@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Charts</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" type="text/css">
+</head>
+<body>
+  <div class="chart">
+    <h2>Sentiment Analysis</h2>
+    <canvas id="sentimentChart" width="400" height="400"></canvas>
+    <h2>Top 10 Usernames by Tweet Count</h2>
+    <canvas id="usernameChart" width="400" height="400"></canvas>
+    <script>
+      // Data for the sentiment chart
+      var sentimentLabels = {{ labels | tojson }};
+      var sentimentValues = {{ values | tojson }};
+      var sentimentColors = {{ colors | tojson }};
+      var sentimentData = {
+        labels: sentimentLabels,
+        datasets: [{
+          data: sentimentValues,
+          backgroundColor: sentimentColors
+        }]
+      };
+
+      // Data for the username chart
+      var usernameLabels = {{ usernames | tojson }};
+      var usernameValues = {{ counts | tojson }};
+      var usernameData = {
+        labels: usernameLabels,
+        datasets: [{
+          label: 'Number of Tweets',
+          data: usernameValues,
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1
+        }]
+      };
+
+      // Sentiment chart
+      var ctxSentiment = document.getElementById('sentimentChart').getContext('2d');
+      new Chart(ctxSentiment, {
+        type: 'pie',
+        data: sentimentData,
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top'
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return context.label + ': ' + context.raw;
+                }
+              }
+            }
+          }
+        }
+      });
+
+      // Username chart
+      var ctxUsername = document.getElementById('usernameChart').getContext('2d');
+      new Chart(ctxUsername, {
+        type: 'bar',
+        data: usernameData,
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return context.label + ': ' + context.raw;
+                }
+              }
+            }
+          }
+        }
+      });
+    </script>
+    <br/>
+    <div class="center">
+      <h5 class="text-type">
+        <span class="positive"></span> Positive: {{ "%.2f" % percentages[0] }}%<br>
+        <span class="negative"></span> Negative: {{ "%.2f" % percentages[1] }}%<br>
+        <span class="neutral"></span> Neutral: {{ "%.2f" % percentages[2] }}%<br>
+        <span>Total Tweets: {{ total_tweets }}</span>
+      </h5>
+    </div>
+  </div>
+  <a href="http://localhost:4001" class="chatbot-button">
+    <i class="fas fa-robot"></i> Chatbot
+  </a>
+  </body>
+</html>
